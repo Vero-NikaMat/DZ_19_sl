@@ -7,12 +7,11 @@ from dao.model.user import UserSchema
 from implemented import user_service
 
 
-
 user_ns = Namespace('users')
 
 @user_ns.route('/')
 class UsersView(Resource):
-    @auth_required
+    # @auth_required
     def get(self):
         all_users = user_service.get_all()
         res = UserSchema(many=True).dump(all_users)
@@ -28,12 +27,12 @@ class UsersView(Resource):
 
 @user_ns.route('/<int:uid>')
 class UserView(Resource):
-    @admin_required
+    # @admin_required
     def delete(self, uid):
         user_service.delete(uid)
         return "", 204
 
-    @auth_required
+    # @auth_required
     def get(self, rid):
         r = user_service.get_one(rid)
         sm_d = UserSchema().dump(r)
