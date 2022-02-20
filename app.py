@@ -17,7 +17,7 @@ def create_app(config_object):
     app.config.from_object(config_object)
     app.app_context().push()
     register_extensions(app)
-    create_data(app, db)
+    #create_data(app, db)
     return app
 
 
@@ -31,14 +31,17 @@ def register_extensions(app):
     api.add_namespace(user_ns)
 
 
+
 def create_data(app, db):
     with app.app_context():
-        # db.drop_all()
         db.create_all()
 
-        u1 = User(username="vasya", password="my_little_pony", role="user")
-        u2 = User(username="oleg", password="qwerty", role="user")
-        u3 = User(username="oleg", password="P@ssw0rd", role="admin")
+        from service.user import UserService
+        from implemented import user_service
+
+        u1 = User(username="vasya", password= UserService(user_service).make_user_password_hash("my_little_pony"), role="user")
+        u2 = User(username="oleg", password= UserService(user_service).make_user_password_hash("qwerty"), role="user")
+        u3 = User(username="oleg", password= UserService(user_service).make_user_password_hash("P@ssw0rd"), role="admin")
 
         with db.session.begin():
             db.session.add_all([u1, u2, u3])
@@ -47,4 +50,4 @@ def create_data(app, db):
 if __name__ == '__main__':
     app = create_app(Config())
     app.debug = True
-    app.run(host="localhost", port=10001)
+    app.run(host="localhost", port=10002)
